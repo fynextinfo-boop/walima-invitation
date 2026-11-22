@@ -1448,23 +1448,31 @@ body.on .dk { transform: translate(-50%, 0); }
   window.__photos = { done: function(){ return phDone; } };
 
   /* ================= CLEAN STUDIO BACKGROUND AUDIO PLAYER ================= */
-  var AC = null;
+  var AC = null, uiAudioOut = null;
   function initAC(){
     if (!AC) AC = new (window.AudioContext || window.webkitAudioContext)();
-    if (AC.state === 'suspended') AC.resume();
+    if (AC.state === 'suspended') {
+      var resume = AC.resume();
+      if (resume && resume.catch) resume.catch(function(){});
+    }
   }
   function playUiClick(){
+    if (document.hidden) return;
     try {
       initAC();
+      if (!uiAudioOut) {
+        uiAudioOut = AC.createGain();
+        uiAudioOut.connect(AC.destination);
+      }
       var now = AC.currentTime, osc = AC.createOscillator(), g = AC.createGain();
       osc.type = 'sine'; osc.frequency.setValueAtTime(720, now); osc.frequency.exponentialRampToValueAtTime(960, now + 0.055);
       g.gain.setValueAtTime(0.055, now); g.gain.exponentialRampToValueAtTime(0.001, now + 0.065);
-      osc.connect(g); g.connect(AC.destination); osc.start(now); osc.stop(now + 0.07);
+      osc.connect(g); g.connect(uiAudioOut); osc.start(now); osc.stop(now + 0.07);
     } catch(e){}
   }
 
   var bgAudio = $('#bg-audio'), musBtn = $('#mus');
-  var MUS = { mode: '', buf: null, src: null, gain: null, on: false, an: null };
+  var MUS = { mode: '', buf: null, src: null, gain: null, on: false, an: null, request: 0 };
 
   function b64ToBuf(){
     var el = document.querySelector('#bg-audio source'), u = (el && el.getAttribute('src')) || bgAudio.getAttribute('src') || '';
@@ -1479,23 +1487,68 @@ body.on .dk { transform: translate(-50%, 0); }
     s.connect(g); g.connect(AC.destination); tapAn(g);
     s.start(0); MUS.src = s; MUS.gain = g; MUS.mode = 'file';
   }
-  function elementPlay(){
-    bgAudio.onplaying = function(){ MUS.mode = 'element'; };
-    try { bgAudio.volume = .88; var p = bgAudio.play(); if (p && p.catch) p.catch(function(){}); } catch(e){}
+  function updateMusicButton(){
+    musBtn.classList.toggle('playing-pulse', MUS.on);
+    musBtn.style.opacity = MUS.on ? '1' : '0.45';
+    musBtn.setAttribute('aria-pressed', String(MUS.on));
   }
+  bgAudio.onplaying = function(){
+    if (MUS.on && !document.hidden) MUS.mode = 'element';
+    else bgAudio.pause();
+  };
   function playMusic(){
-    initAC(); MUS.on = true;
-    if (MUS.buf) { runBuf(); return; }
-    try { AC.decodeAudioData(b64ToBuf(), function(buf){ MUS.buf = buf; if (MUS.on) runBuf(); }, elementPlay); }
-    catch(e){ elementPlay(); }
+    if (document.hidden || MUS.on) return;
+    MUS.on = true;
+    updateMusicButton();
+    var request = ++MUS.request;
+    function canStart(){ return MUS.on && request === MUS.request && !document.hidden; }
+    function elementPlay(){
+      if (!canStart()) return;
+      try {
+        bgAudio.volume = .88;
+        var play = bgAudio.play();
+        if (play && play.catch) play.catch(function(){ if (canStart()) stopMusic(); });
+      } catch(e){ stopMusic(); }
+    }
+    try {
+      initAC();
+      if (MUS.buf) { runBuf(); return; }
+      var decode = AC.decodeAudioData(b64ToBuf(), function(buf){
+        MUS.buf = buf;
+        if (canStart()) {
+          try { runBuf(); } catch(e){ elementPlay(); }
+        }
+      }, elementPlay);
+      if (decode && decode.catch) decode.catch(function(){});
+    } catch(e){ elementPlay(); }
   }
   function stopMusic(){
+    ++MUS.request;
     MUS.on = false;
-    if (MUS.src) { try { MUS.gain.gain.setTargetAtTime(0, AC.currentTime, .15); MUS.src.stop(AC.currentTime + .6); } catch(e){} MUS.src = null; }
-    try { bgAudio.pause(); } catch(e){}
+    MUS.mode = '';
+    if (MUS.src) {
+      try { MUS.gain.disconnect(); } catch(e){}
+      try { MUS.src.stop(); } catch(e){}
+      MUS.src = MUS.gain = null;
+    }
+    bgAudio.pause();
+    updateMusicButton();
   }
+  function stopInvitationAudio(){
+    stopMusic();
+    if (uiAudioOut) {
+      uiAudioOut.disconnect();
+      uiAudioOut = null;
+    }
+  }
+  document.addEventListener('visibilitychange', function(){
+    if (document.hidden) stopInvitationAudio();
+  });
+  window.addEventListener('pagehide', stopInvitationAudio);
+  window.addEventListener('blur', stopInvitationAudio);
+
   function startRoyalAudio(){
-    musBtn.style.display = 'grid'; musBtn.classList.add('playing-pulse'); musBtn.style.opacity = '1';
+    musBtn.style.display = 'grid';
     playMusic();
   }
   window.__music = {
@@ -1510,11 +1563,11 @@ body.on .dk { transform: translate(-50%, 0); }
   musBtn.onclick = function(){
     playUiClick();
     if (MUS.on) {
-      stopMusic(); musBtn.style.opacity = '0.45'; musBtn.classList.remove('playing-pulse');
+      stopMusic();
       toast(T('Background music paused', 'பின்னணி இசை நிறுத்தப்பட்டது'));
     } else {
-      playMusic(); musBtn.style.opacity = '1'; musBtn.classList.add('playing-pulse');
-      toast(T('Playing background music', 'பின்னணி இசை ஒலிக்கிறது'));
+      playMusic();
+      if (MUS.on) toast(T('Playing background music', 'பின்னணி இசை ஒலிக்கிறது'));
     }
   };
 
