@@ -5,16 +5,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#050507">
-<meta property="og:title" content="Walima · R.M. Fairoos &amp; F.J. Sahra · 6 Dec 2026">
+<meta property="og:title" content="Walima · R.M. Fairoos &amp; J.F. Sahra · 6 Dec 2026">
 <meta property="og:description" content="Join us for our Walima on 6 December 2026 at 12:30 PM at White Reception Hall, Nagawilluwa, Puttalam.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://fynextinfo-boop.github.io/walima-invitation/">
-<meta property="og:image" content="https://fynextinfo-boop.github.io/walima-invitation/walima-cover.jpg">
+<meta property="og:image" content="https://fynextinfo-boop.github.io/walima-invitation/walima-cover.jpg?v=jf">
 <meta property="og:image:type" content="image/jpeg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="Black and gold Walima invitation for R.M. Fairoos and F.J. Sahra, 6 December 2026.">
-<title>Walima · R.M. Fairoos &amp; F.J. Sahra</title>
+<meta property="og:image:alt" content="Black and gold Walima invitation for R.M. Fairoos and J.F. Sahra, 6 December 2026.">
+<title>Walima · R.M. Fairoos &amp; J.F. Sahra</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Cormorant+SC:wght@500;600;700&family=Great+Vibes&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Montserrat:wght@400;500;600;700&family=Mukta+Malar:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&family=Noto+Serif+Tamil:wght@500;600;700;800&family=Scheherazade+New:wght@400;700&display=swap" rel="stylesheet">
@@ -1047,7 +1047,7 @@ body.on .dk { transform: translate(-50%, 0); }
         <div id="nameBlock">
           <div class="names shim"><span class="name-init">R.M.</span> Fairoos</div>
           <div class="amp-row"><span class="amp">&amp;</span></div>
-          <div class="names shim"><span class="name-init">F.J.</span> Sahra</div>
+          <div class="names shim"><span class="name-init">J.F.</span> Sahra</div>
         </div>
 
         <!-- BESPOKE STUDIO COUPLE PORTRAIT STAGE -->
@@ -1098,7 +1098,7 @@ body.on .dk { transform: translate(-50%, 0); }
                 </div>
                 <div class="portrait-plaque">
                   <div class="plaque-role" data-en="The Bride" data-ta="மணமகள்">The Bride</div>
-                  <div class="plaque-name" data-en="F.J. Sahra" data-ta="F.J. ஸஹ்ரா">F.J. Sahra</div>
+                  <div class="plaque-name" data-en="J.F. Sahra" data-ta="J.F. ஸஹ்ரா">J.F. Sahra</div>
                 </div>
               </div>
             </div>
@@ -1279,7 +1279,7 @@ body.on .dk { transform: translate(-50%, 0); }
 <script>
 (function(){
   var EVENT = {
-    title: 'Walima – R.M. Fairoos & F.J. Sahra',
+    title: 'Walima – R.M. Fairoos & J.F. Sahra',
     start: '20261206T070000Z',
     end: '20261206T103000Z',
     date: new Date('2026-12-06T12:30:00+05:30'),
@@ -1701,7 +1701,7 @@ body.on .dk { transform: translate(-50%, 0); }
         var n = c[1].replace(/\D/g, '');
         h += '<div class="ct-row"><div class="ct-name">' + c[0] + '<small>' + c[1] + '</small></div><div class="ct-act">' +
              '<a class="ct-b" href="tel:+' + n + '">' + T('Call', 'அழை') + '</a>' +
-             '<a class="ct-b ct-w" target="_blank" rel="noopener noreferrer" href="https://wa.me/' + n + '?text=' + encodeURIComponent('Assalamu Alaikum! Regarding the Walima of R.M. Fairoos & F.J. Sahra on 6 December 2026') + '">WhatsApp</a></div></div>';
+             '<a class="ct-b ct-w" target="_blank" rel="noopener noreferrer" href="https://wa.me/' + n + '?text=' + encodeURIComponent('Assalamu Alaikum! Regarding the Walima of R.M. Fairoos & J.F. Sahra on 6 December 2026') + '">WhatsApp</a></div></div>';
       });
     } else if (type === 'share') {
       h = '<h2>' + T('Share Walima Invitation', 'அழைப்பிதழைப் பகிரவும்') + '</h2>' +
@@ -1721,11 +1721,24 @@ body.on .dk { transform: translate(-50%, 0); }
       playUiClick();
       if (navigator.share) { navigator.share({ title: EVENT.title, url: location.href }).catch(function(){}); }
       else {
-        try { navigator.clipboard.writeText(location.href).then(function(){ toast(T('Link copied to clipboard!', 'அழைப்பிதழ் லிங்க் நகலெடுக்கப்பட்டது!')); }, function(){ throw 0; }); }
-        catch(e){
-          var t2 = document.createElement('textarea'); t2.value = location.href; document.body.appendChild(t2); t2.select();
-          try { document.execCommand('copy'); toast(T('Link copied to clipboard!', 'அழைப்பிதழ் லிங்க் நகலெடுக்கப்பட்டது!')); } catch(x){} t2.remove();
+        function copied(){ toast(T('Link copied to clipboard!', 'அழைப்பிதழ் லிங்க் நகலெடுக்கப்பட்டது!')); }
+        function copyFallback(){
+          var field = document.createElement('textarea');
+          field.value = location.href;
+          field.readOnly = true;
+          field.style.position = 'fixed';
+          field.style.opacity = '0';
+          document.body.appendChild(field);
+          field.select();
+          var success = false;
+          try { success = document.execCommand('copy'); } catch(e){}
+          field.remove();
+          shr.focus({ preventScroll: true });
+          if (success) copied();
+          else toast(T('Could not copy the invitation link', 'அழைப்பிதழ் லிங்கை நகலெடுக்க முடியவில்லை'));
         }
+        if (navigator.clipboard) navigator.clipboard.writeText(location.href).then(copied, copyFallback);
+        else copyFallback();
       }
     };
   }
